@@ -29,9 +29,57 @@ struct node{
 	struct node *right;
 };
 
+int Counter(struct node *n)
+{
+	int c = 1;
 
+	if (n == NULL)
+		return 0;
+	else
+	{
+		c += Counter(n->left);
+		c += Counter(n->right);
+		return c;
+	}
+}
+struct node** createQueue(int *front, int *rear, int size)
+{
+	struct node **queue =
+		(struct node **)malloc(sizeof(struct node*)*size);
 
+	*front = *rear = 0;
+	return queue;
+}
+
+void add(struct node **queue, int *rear, struct node *new_node)
+{
+	queue[*rear] = new_node;
+	(*rear)++;
+}
+
+struct node *del(struct node **queue, int *front)
+{
+	(*front)++;
+	return queue[*front - 1];
+}
 int* BSTRighttoLeftRows(struct node* root)
 {
-    return NULL;
+	if (root == NULL)
+		return NULL;
+	int rear=0, front=0;
+	struct node **queue =(struct node **)malloc(sizeof(struct node*)*Counter(root));
+	struct node *temp = root;
+	int *arr, i = 0;
+	arr = (int*)malloc(sizeof(int)*Counter(root));
+	while (i<Counter(root))
+	{
+		arr[i] = temp->data;
+		if (temp->right)
+			add(queue, &rear, temp->right);
+		if (temp->left)
+			add(queue, &rear, temp->left);
+		temp = del(queue, &front);
+		i++;
+	}
+	return arr;
 }
