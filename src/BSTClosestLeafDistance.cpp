@@ -34,12 +34,44 @@ Return -1 ,for Invalid Inputs
 #include <stdio.h>
 
 struct node{
-  struct node * left;
-  int data;
-  struct node *right;
+	struct node * left;
+	int data;
+	struct node *right;
 };
+int getMin(int x, int y)
+{
+	if (x < y)
+		return x;
+	else
+		return y;
+}
+int length(struct node *root)
+{
+	if (root == NULL)
+		return INT_MAX;
+	if (root->left == NULL && root->right == NULL)
+		return 0;
+	return 1 + getMin(length(root->left), length(root->right));
+}
+int Closest(struct node *root, char k, struct node *ancestors[], int index)
+{
+	if (root == NULL)
+		return INT_MAX;
+	if (root->data == k)
+	{
+		int r = length(root);
+		for (int i = index - 1; i >= 0; i--)
+			r = getMin(r, index - i + length(ancestors[i]));
+		return r;
+	}
+	ancestors[index] = root;
+	return getMin(Closest(root->left, k, ancestors, index + 1), Closest(root->right, k, ancestors, index + 1));
 
+}
 int get_closest_leaf_distance(struct node *root, struct node *temp)
 {
-  return -1;
+	struct node *ancestors[100];
+	if (root == NULL || temp == NULL)
+		return -1;
+	return Closest(root, temp->data, ancestors, 0);
 }
